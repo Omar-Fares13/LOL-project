@@ -18,3 +18,18 @@ export const getPlayerStats = async (PUUID) => {
     return null;
   }
 };
+
+export const getPlayerPUUID = async (name, tagline) => {
+  try{
+    const response = await axios.get(
+      `https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${name}/${tagline}`,
+      {
+        headers: { "X-Riot-Token": RIOT_API_KEY },
+      }
+    );
+    return response.data.puuid;
+  }catch (error){
+    console.log("Error getting player PUUID:", error.message)
+    return null;
+  }
+};
