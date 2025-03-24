@@ -7,5 +7,8 @@ export const fetchPlayer = async (req, res) => {
 
   if (!playerStats) return res.status(404).json({ error: "Player not found" });
 
-  res.json(playerStats);
+  res.json({
+    solo_duo_rank: `${playerStats[1].tier} ${playerStats[1].rank}`,
+    flex_rank: `${playerStats[0].tier} ${playerStats[0].rank}`,
+  });
 };

@@ -7,7 +7,7 @@ const RIOT_API_KEY = process.env.RIOT_API_KEY;
 export const getPlayerStats = async (PUUID) => {
   try {
     const response = await axios.get(
-      `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${PUUID}`,
+      `https://euw1.api.riotgames.com/lol/league/v4/entries/by-puuid/${PUUID}`,
       {
         headers: { "X-Riot-Token": RIOT_API_KEY },
       }
