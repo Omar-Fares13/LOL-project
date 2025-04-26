@@ -60,5 +60,3 @@ API will be live at `http://localhost:3000`
 
 This project is under active development and limited by the Riot Developer API key rate.  
 Data caching and match analysis features are coming soon.
-
-```
