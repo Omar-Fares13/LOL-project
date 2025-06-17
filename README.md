@@ -27,7 +27,7 @@ cd riotstats
 
 ### 2. Set up environment variables
 
-Create a `.env` file in the root folder:
+Create a `.env` file in the src folder:
 
 ```env
 PORT=3000
@@ -43,8 +43,6 @@ npm install
 ### 4. Run the server
 
 ```bash
-npm run dev
-# or if not using nodemon:
 node server.js
 ```
 
