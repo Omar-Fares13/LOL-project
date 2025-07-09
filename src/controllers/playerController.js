@@ -2,10 +2,10 @@ import { getPlayerStats, getPlayerPUUID } from "../services/riotService.js";
 import { getPlayerFromDB, savePlayerToDB } from "../services/playerService.js";
 
 export const fetchPlayer = async (req, res) => {
-  const { name, tagline } = req.params;
+  const { region, name, tagline } = req.params;
 
   try {
-    const puuid = await getPlayerPUUID(name, tagline);
+    const puuid = await getPlayerPUUID(region, name, tagline);
     if (!puuid) return res.status(404).json({ error: "Player not found" });
 
     // Check DB first
@@ -23,7 +23,7 @@ export const fetchPlayer = async (req, res) => {
     }
 
     // Not in DB, fetch from Riot API
-    const stats = await getPlayerStats(puuid);
+    const stats = await getPlayerStats(region, puuid);
     if (!stats) return res.status(404).json({ error: "Could not fetch stats" });
 
     // Save to DB
