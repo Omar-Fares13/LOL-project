@@ -1,19 +1,29 @@
 # 🔹 RiotStats – League of Legends Player Stats API
 
 A backend API built with Node.js and Express that fetches and caches League of Legends player data using the Riot Games API.  
-Designed to be used by frontend apps (web/mobile) and supports intelligent caching to reduce API load and improve response time.
+Designed to support frontend apps (web/mobile) and includes intelligent caching to reduce API load and improve performance.
+
+---
+
+## 🌐 Live Deployment
+
+You can access and test the live API here:
+
+📍 **Base URL:**  
+[`https://lol-project-rah3.onrender.com/`](https://lol-project-rah3.onrender.com/)
 
 ---
 
 ## ✅ Features
 
-- 🔍 Get player stats (Solo/Duo + Flex) by Riot ID and region
-- 🧠 Smart caching: stores player data in PostgreSQL and auto-refreshes if data is stale (older than 24 hours)
-- 🔁 Manual force-refresh via query parameter `?force=true`
-- 🧱 Modular structure: controllers, services, and database layers separated cleanly
+- 🔍 Get player ranked stats (Solo/Duo + Flex) by Riot ID and region
+- 🧠 Smart caching: stores data in PostgreSQL and refreshes if stale (older than 24h)
+- 🔁 Manual force-refresh support via `?force=true`
+- ⚡ Efficient DB fallback to reduce Riot API rate usage
+- 🧱 Clean architecture: services, controllers, and DB layers separated
 - 🔜 In Development:
-  - `/matches/:puuid`: Fetch last 20 match IDs for a player
-  - `/match/:matchId`: Get full match details by match ID
+  - `/matches/:puuid`: Fetch last 20 match IDs
+  - `/match/:matchId`: Fetch full match data by ID
 
 ---
 
@@ -21,19 +31,80 @@ Designed to be used by frontend apps (web/mobile) and supports intelligent cachi
 
 - Node.js + Express
 - PostgreSQL
-- Axios (for HTTP requests to Riot API)
-- Dotenv (for environment variables)
+- Axios (for Riot API requests)
+- Dotenv (for environment configs)
+- Hosted on [Render](https://render.com)
 
 ---
 
-## 🚀 Getting Started
+## 🧭 API Endpoints
 
-### 1. Clone the repo
+### 📌 `GET /api/player/:region/:name/:tagline`
+
+Fetches a player's current Solo/Duo and Flex ranks.
+
+#### 🔧 Parameters
+
+| Param    | Description                        | Example    |
+|----------|------------------------------------|------------|
+| `region` | Platform routing region            | `euw1`, `na1`, `kr` |
+| `name`   | Riot ID name (summoner name)       | `astar`    |
+| `tagline`| Riot tagline (region-specific tag) | `2372`      |
+
+for more data to test you can refer to https://u.gg/lol/profile/euw1/astar-2372/overview
+
+#### 🔄 Optional Query
+
+| Query      | Description                           |
+|------------|---------------------------------------|
+| `force=true` | Force fetch from Riot API (ignore cache) |
+
+#### ✅ Example Request
+
+```http
+GET https://lol-project-rah3.onrender.com/api/player/euw1/astar/2372
+GET https://lol-project-rah3.onrender.com/api/player/euw1/astar/2372?force=true
+````
+
+#### ✅ Example Response
+
+```json
+{
+  "solo_duo_rank": "I",
+  "solo_duo_tier": "DIAMOND",
+  "solo_duo_lp": 72,
+  "flex_rank": "IV",
+  "flex_tier": "PLATINUM",
+  "flex_lp": 39,
+  "cached": true
+}
+```
+
+> `"cached": true` → served from database
+> `"cached": false` → fetched fresh from Riot API
+
+---
+
+## 🛠️ Upcoming Endpoints (In Progress)
+
+### `GET /api/matches/:puuid`
+
+Returns the last 20 match IDs played by a player.
+
+### `GET /api/match/:matchId`
+
+Returns full details and stats for the given match ID.
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+### 1. Clone the project
 
 ```bash
 git clone https://github.com/your-username/riotstats.git
 cd riotstats
-````
+```
 
 ### 2. Set up environment variables
 
@@ -50,87 +121,48 @@ RIOT_API_KEY=your-riot-api-key-here
 npm install
 ```
 
-### 4. Start the server
+### 4. Start the server locally
 
 ```bash
 node server.js
 ```
 
-API will be live at `http://localhost:3000`
+Local API will be available at: `http://localhost:3000/api`
 
 ---
 
-## 🧭 API Endpoints
+## 📁 Project Structure
 
-### `GET /api/player/:region/:name/:tagline`
-
-Fetches a player's **Solo/Duo** and **Flex** rank info.
-
-#### 📌 Parameters
-
-* `region` — Platform region (e.g. `euw1`, `na1`, `kr`)
-* `name` — Summoner name (e.g. `Faker`)
-* `tagline` — Riot tagline (e.g. `KR1`)
-
-#### 🔄 Optional Query
-
-* `?force=true` — Force-refreshes the data from Riot API and updates the database
-
-#### ✅ Response
-
-```json
-{
-  "solo_duo_rank": "I",
-  "solo_duo_tier": "DIAMOND",
-  "solo_duo_lp": 72,
-  "flex_rank": "IV",
-  "flex_tier": "PLATINUM",
-  "flex_lp": 39,
-  "cached": true
-}
 ```
-
-* `"cached": true` means data came from the database.
-* `"cached": false` means data was freshly fetched from Riot.
-
----
-
-## 🛠️ Planned Endpoints (In Progress)
-
-### `GET /api/matches/:puuid`
-
-Returns the last 20 match IDs played by the given player (by PUUID).
-
-### `GET /api/match/:matchId`
-
-Returns full match details for the given match ID, including participant stats.
+/controllers       - Route logic
+/services          - Riot API + DB logic
+/routes            - Express route definitions
+/db.js             - PostgreSQL connection setup
+/regionMap.js      - Riot API routing by region
+/.env              - API Key and env config
+server.js          - Entry point
+```
 
 ---
 
 ## 📌 Notes
 
-* This API uses the **Riot Developer Key**, which has strict rate limits (20 requests/sec). Caching is used to stay within those limits.
-* The project is under active development.
-* Future features include champion win rate tracking, matchup stats, item analysis, and ML-based build recommendations.
+* This API uses the **Riot Developer Key**, which is rate-limited (20 req/sec).
+* Smart caching ensures minimal Riot API calls and better scalability.
+* Future roadmap includes:
 
----
-
-## 💻 Project Structure
-
-```
-/controllers     - Route logic
-/services        - Riot API and DB logic
-/routes          - Express route definitions
-/db.js           - PostgreSQL connection
-regionMap.js     - Region-to-routing map for Riot API
-.env             - Riot API Key and environment config
-server.js        - Entry point
-```
+  * Champion analytics
+  * Counter stats
+  * Live match detection
+  * ML-based item/build suggestions
 
 ---
 
 ## 🤝 Contributions
 
-Contributions are welcome! If you'd like to help extend functionality (match parsing, leaderboard stats, etc.), feel free to open an issue or PR.
+Contributions are welcome!
+To contribute: fork the repo, make changes, and open a pull request. Feature ideas, bug fixes, and feedback are always appreciated.
 
-This project isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends.
+> This project is **not endorsed** by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends.
+
+---
