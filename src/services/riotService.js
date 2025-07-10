@@ -17,7 +17,7 @@ export const getPlayerStats = async (region, PUUID) => {
         headers: { "X-Riot-Token": RIOT_API_KEY },
       }
     );
-    console.log("Fetched stats:", response.data);
+    //console.log("Fetched stats:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching player stats:", error.message);
