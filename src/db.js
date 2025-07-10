@@ -21,4 +21,10 @@ const pool = new Pool(
       }
 );
 
+console.log(
+  `Connected to database using ${
+    process.env.DATABASE_URL ? 'Render (production)' : 'local .env'
+  } settings`
+);
+
 export default pool;
