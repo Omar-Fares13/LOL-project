@@ -113,6 +113,11 @@ Create a `.env` file in the root directory:
 ```env
 PORT=3000
 RIOT_API_KEY=your-riot-api-key-here
+USER=omarf
+HOST=localhost
+DATABASE=omarf
+DB_PORT=5432
+DB_PASSWORD=/WahitCat13/
 ```
 
 ### 3. Install dependencies
