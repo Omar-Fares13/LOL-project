@@ -115,9 +115,9 @@ PORT=3000
 RIOT_API_KEY=your-riot-api-key-here
 USER=omarf
 HOST=localhost
-DATABASE=omarf
+DATABASE=user
 DB_PORT=5432
-DB_PASSWORD=/WahitCat13/
+DB_PASSWORD=password
 ```
 
 ### 3. Install dependencies
