@@ -6,6 +6,9 @@ export const getPlayerFromDB = async (region, name, tagline) => {
 };
 
 export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
+  // Safely extract the queues using `.find()`
+  const soloQueue = stats.find(q => q.queueType === "RANKED_SOLO_5x5");
+  const flexQueue = stats.find(q => q.queueType === "RANKED_FLEX_SR");
 
   await pool.query(`
     INSERT INTO players (puuid, region, summoner_name, tagline, solo_tier, solo_rank, solo_lp, flex_tier, flex_rank, flex_lp)
@@ -23,19 +26,20 @@ export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
       last_updated = NOW();
   `, [
     puuid, region, name, tagline,
-    stats[1].tier || null, stats[1].rank || null, stats[1].leaguePoints || null,
-    stats[0].tier || null, stats[0].rank || null, stats[0].leaguePoints || null
+    soloQueue?.tier || null, soloQueue?.rank || null, soloQueue?.leaguePoints || null,
+    flexQueue?.tier || null, flexQueue?.rank || null, flexQueue?.leaguePoints || null
   ]);
 };
+
 
 export const getPlayerFromRiot = async (region, name, tagline) => {
 
       const puuid = await getPlayerPUUID(region, name, tagline);
-      if (!puuid) return res.status(404).json({ error: "Player not found" });
+      if (!puuid) return null;
 
       // fetch from Riot API
       const stats = await getPlayerStats(region, puuid);
-      if (!stats) return res.status(404).json({ error: "Could not fetch stats" });
+      if (!stats) return null;
 
       return {puuid, stats};
 };

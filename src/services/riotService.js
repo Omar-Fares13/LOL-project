@@ -37,6 +37,7 @@ export const getPlayerPUUID = async (region, name, tagline) => {
         headers: { "X-Riot-Token": RIOT_API_KEY },
       }
     );
+    //console.log("fetched puuid data: " , response);
     return response.data.puuid;
   }catch (error){
     console.log("Error getting player PUUID:", error.message)
