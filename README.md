@@ -22,8 +22,7 @@ You can access and test the live API here:
 - ⚡ Efficient DB fallback to reduce Riot API rate usage
 - 🧱 Clean architecture: services, controllers, and DB layers separated
 - 🔜 In Development:
-  - `/matches/:puuid`: Fetch last 20 match IDs
-  - `/match/:matchId`: Fetch full match data by ID
+  - `/match-details/:matchId`: Fetch full match data by ID
 
 ---
 
@@ -39,7 +38,7 @@ You can access and test the live API here:
 
 ## 🧭 API Endpoints
 
-### 📌 `GET /api/player/:region/:name/:tagline`
+### 📌 `GET /player/:region/:name/:tagline`
 
 Fetches a player's current Solo/Duo and Flex ranks.
 
@@ -62,8 +61,8 @@ for more data to test you can refer to https://u.gg/lol/profile/euw1/astar-2372/
 #### ✅ Example Request
 
 ```http
-GET https://lol-project-rah3.onrender.com/api/player/euw1/astar/2372
-GET https://lol-project-rah3.onrender.com/api/player/euw1/astar/2372?force=true
+GET https://lol-project-rah3.onrender.com/player/euw1/astar/2372
+GET https://lol-project-rah3.onrender.com/player/euw1/astar/2372?force=true
 ````
 
 #### ✅ Example Response
@@ -85,13 +84,58 @@ GET https://lol-project-rah3.onrender.com/api/player/euw1/astar/2372?force=true
 
 ---
 
+### 📌 `GET /match/:region/:name/:tagline`
+
+Fetches a player's last 20 matchs.
+
+#### 🔧 Parameters
+
+| Param    | Description                        | Example    |
+|----------|------------------------------------|------------|
+| `region` | Platform routing region            | `euw1`, `na1`, `kr` |
+| `name`   | Riot ID name (summoner name)       | `astar`    |
+| `tagline`| Riot tagline (region-specific tag) | `2372`      |
+
+for more data to test you can refer to https://u.gg/lol/profile/euw1/astar-2372/overview
+
+#### ✅ Example Request
+
+```http
+GET https://lol-project-rah3.onrender.com/match/euw1/astar/2372
+````
+
+#### ✅ Example Response
+
+```json
+{
+0	"EUW1_7467501522"
+1	"EUW1_7467436848"
+2	"EUW1_7466527033"
+3	"EUW1_7466481381"
+4	"EUW1_7466427257"
+5	"EUW1_7460824772"
+6	"EUW1_7460804691"
+7	"EUW1_7460778870"
+8	"EUW1_7452199300"
+9	"EUW1_7452194993"
+10	"EUW1_7447879787"
+11	"EUW1_7447841679"
+12	"EUW1_7447801449"
+13	"EUW1_7447716596"
+14	"EUW1_7447710814"
+15	"EUW1_7447678802"
+16	"EUW1_7447451254"
+17	"EUW1_7447428267"
+18	"EUW1_7447392083"
+19	"EUW1_7447359967"
+}
+```
+
+---
+
 ## 🛠️ Upcoming Endpoints (In Progress)
 
-### `GET /api/matches/:puuid`
-
-Returns the last 20 match IDs played by a player.
-
-### `GET /api/match/:matchId`
+### `GET /api/match-details/:matchId`
 
 Returns full details and stats for the given match ID.
 
