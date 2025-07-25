@@ -1,9 +1,16 @@
 import pool from "../db.js"; 
 import { getPlayerPUUID, getPlayerStats } from "./riotService.js";
+
+
+
+
 export const getPlayerFromDB = async (region, name, tagline) => {
   const { rows } = await pool.query("SELECT * FROM players WHERE region = $1 AND summoner_name = $2 AND tagline = $3", [region, name, tagline]);
   return rows[0] || null;
 };
+
+
+
 
 export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
   // Safely extract the queues using `.find()`

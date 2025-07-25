@@ -17,3 +17,15 @@ export const getMatchIds = async (region, puuid, count = 20) => {
   );
   return response.data;
 };
+
+export const getMatchDetails = async (region, matchID) => {
+
+  const response = await axios.get(
+    `https://${regionRouterMap[region]}.api.riotgames.com/lol/match/v5/matches/${matchID}`,
+    {
+      headers: { "X-Riot-Token": RIOT_API_KEY },
+    }
+  );
+  return response.data;
+};
+
