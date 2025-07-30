@@ -6,7 +6,7 @@ export const fetchPlayer = async (req, res) => {
   const force = req.query.force === "true";
 
   try {
-    logger.info(`Incoming request for ${name}#${tagline} [${region}], force=${force}`);
+    logger.info(`Incoming request for player for ${name}#${tagline} [${region}], force=${force}`);
 
     if (!force) {
       // Check DB first
@@ -16,17 +16,12 @@ export const fetchPlayer = async (req, res) => {
         const lastUpdate = new Date(cachedPlayer.last_updated);
         const diff = (now - lastUpdate) / 86400000;
 
-        if (diff < 1) {
-          logger.info(`Cache HIT for ${name}#${tagline} [${region}], last updated ${diff.toFixed(2)} days ago`);
+        if (diff < 3) {
+          logger.info(`Cache HIT for player for ${name}#${tagline} [${region}], last updated ${diff.toFixed(2)} days ago`);
 
           return res.json({
-            solo_duo_rank: cachedPlayer.solo_rank,
-            solo_duo_tier: cachedPlayer.solo_tier,
-            solo_duo_lp: cachedPlayer.solo_lp,
-            flex_rank: cachedPlayer.flex_rank,
-            flex_tier: cachedPlayer.flex_tier,
-            flex_lp: cachedPlayer.flex_lp,
-            cached: true
+            cached: true,
+            player: cachedPlayer
           });
         } else {
           logger.info(`Cache STALE for ${name}#${tagline} [${region}], last updated ${diff.toFixed(2)} days ago`);
@@ -55,19 +50,11 @@ export const fetchPlayer = async (req, res) => {
     await savePlayerToDB(puuid, region, name, tagline, stats);
     logger.info(`Fetched and saved stats for ${name}#${tagline} [${region}]`);
 
-    const soloQueue = stats.find(q => q.queueType === 'RANKED_SOLO_5x5');
-    const flexQueue = stats.find(q => q.queueType === 'RANKED_FLEX_SR');
+    const player = await getPlayerFromDB(region, name, tagline);
 
     res.json({
-      solo_duo_rank: soloQueue?.rank || "UNRANKED",
-      solo_duo_tier: soloQueue?.tier || "UNRANKED",
-      solo_duo_lp: soloQueue?.leaguePoints ?? 0,
-
-      flex_rank: flexQueue?.rank || "UNRANKED",
-      flex_tier: flexQueue?.tier || "UNRANKED",
-      flex_lp: flexQueue?.leaguePoints ?? 0,
-
-      cached: false
+      cached: false,
+      player: player
     });
 
   } catch (error) {

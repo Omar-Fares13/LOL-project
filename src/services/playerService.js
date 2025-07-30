@@ -5,10 +5,18 @@ import { getPlayerPUUID, getPlayerStats } from "./riotService.js";
 
 
 export const getPlayerFromDB = async (region, name, tagline) => {
-  const { rows } = await pool.query("SELECT * FROM players WHERE region = $1 AND summoner_name = $2 AND tagline = $3", [region, name, tagline]);
+  const { rows } = await pool.query("SELECT * FROM players WHERE region = $1 AND summoner_name = $2 AND tagline = $3", [region.toLowerCase(), name.toLowerCase(), tagline.toLowerCase()]);
   return rows[0] || null;
 };
 
+
+export const getPlayerByPUUID = async (puuid) => {
+  const { rows } = await pool.query(
+    "SELECT * FROM players WHERE puuid = $1",
+    [puuid]
+  );
+  return rows[0] || null;
+};
 
 
 
@@ -32,7 +40,7 @@ export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
       flex_lp = EXCLUDED.flex_lp,
       last_updated = NOW();
   `, [
-    puuid, region, name, tagline,
+    puuid, region.toLowerCase(), name.toLowerCase(), tagline.toLowerCase(),
     soloQueue?.tier || null, soloQueue?.rank || null, soloQueue?.leaguePoints || null,
     flexQueue?.tier || null, flexQueue?.rank || null, flexQueue?.leaguePoints || null
   ]);
@@ -41,9 +49,12 @@ export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
 
 export const getPlayerFromRiot = async (region, name, tagline) => {
 
-      const puuid = await getPlayerPUUID(region, name, tagline);
-      if (!puuid) return null;
-
+      const player = await getPlayerFromDB(region, name, tagline);
+      var puuid = null;
+      if (!player) {
+        puuid = getPlayerPUUID(region,name,tagline);
+      }
+      puuid = player.puuid;
       // fetch from Riot API
       const stats = await getPlayerStats(region, puuid);
       if (!stats) return null;

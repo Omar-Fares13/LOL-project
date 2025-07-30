@@ -1,6 +1,7 @@
 import pkg from 'pg';
 const { Pool } = pkg;
 import dotenv from 'dotenv';
+import { logger } from './logger.js';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ const pool = new Pool(
       }
 );
 
-console.log(
+logger.info(
   `Connected to database using ${
     process.env.DATABASE_URL ? 'Render (production)' : 'local .env'
   } settings`
