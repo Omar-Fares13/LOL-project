@@ -52,7 +52,7 @@ export const getPlayerFromRiot = async (region, name, tagline) => {
       const player = await getPlayerFromDB(region, name, tagline);
       let puuid = null;
       if (!player) {
-        puuid = getPlayerPUUID(region,name,tagline);
+        puuid = await getPlayerPUUID(region,name,tagline);
       }else{
         puuid = player.puuid;
       }
