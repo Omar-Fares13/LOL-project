@@ -50,11 +50,12 @@ export const savePlayerToDB = async (puuid, region, name, tagline, stats) => {
 export const getPlayerFromRiot = async (region, name, tagline) => {
 
       const player = await getPlayerFromDB(region, name, tagline);
-      var puuid = null;
+      let puuid = null;
       if (!player) {
         puuid = getPlayerPUUID(region,name,tagline);
+      }else{
+        puuid = player.puuid;
       }
-      puuid = player.puuid;
       // fetch from Riot API
       const stats = await getPlayerStats(region, puuid);
       if (!stats) return null;
