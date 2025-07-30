@@ -1,3 +1,11 @@
+---
+
+⚠️ **Note about `500 Internal Server Error`**
+
+If you encounter a `500 Internal Server Error` when trying any of the endpoints, it's likely because the Riot API key has expired. Riot’s development API keys expire every 24 hours, and while I do my best to update the key daily, there may occasionally be short periods of downtime if I forget or am unavailable. Thanks for your understanding!
+
+---
+
 # 🔹 RiotStats – League of Legends Player Stats API
 
 A backend API built with Node.js and Express that fetches and caches League of Legends player data using the Riot Games API.  
@@ -69,13 +77,23 @@ GET https://lol-project-rah3.onrender.com/player/euw1/astar/2372?force=true
 
 ```json
 {
-  "solo_duo_rank": "I",
-  "solo_duo_tier": "DIAMOND",
-  "solo_duo_lp": 72,
-  "flex_rank": "IV",
-  "flex_tier": "PLATINUM",
-  "flex_lp": 39,
-  "cached": true
+  "cached": true,
+  "player": {
+    "id": 1,
+    "puuid": "pefsqVlakPAy-EQvMpq2W8Xe1w-Z5Id5UkgLMQMF7clXpVqC0ec8rxzPvMH4drwgiFjeN0YHoS6kog",
+    "summoner_name": "astar",
+    "tagline": "2372",
+    "solo_tier": "BRONZE",
+    "solo_rank": "I",
+    "solo_lp": 39,
+    "flex_tier": "BRONZE",
+    "flex_rank": "II",
+    "flex_lp": 91,
+    "last_updated": "2025-07-29T22:27:59.992Z",
+    "region": "euw1",
+    "level": 473,
+    "last_synced_match_id": null
+  }
 }
 ```
 
@@ -84,9 +102,9 @@ GET https://lol-project-rah3.onrender.com/player/euw1/astar/2372?force=true
 
 ---
 
-### 📌 `GET /match/match-ids/:region/:name/:tagline`
+### 📌 `GET /player/:region/:name/:tagline/matches`
 
-Fetches a player's last 20 matchs.
+Fetches a player's matches summary.
 
 #### 🔧 Parameters
 
@@ -98,94 +116,85 @@ Fetches a player's last 20 matchs.
 
 for more data to test you can refer to https://u.gg/lol/profile/euw1/astar-2372/overview
 
+#### 🔄 Optional Query
+
+| Query      | Description                           |
+|------------|---------------------------------------|
+| `force=true` | Force fetch from Riot API (ignore cache) |
+| `count=20` | The number of matches to fetch defaults to 20 |
+| `offset=0` | The offest to start fetching from defaults to 0 |
+
 #### ✅ Example Request
 
 ```http
-GET https://lol-project-rah3.onrender.com/match/match-ids/euw1/astar/2372
+GET https://lol-project-rah3.onrender.com/player/euw1/astar/2372/matches?count=1&offset=0&force=true
 ````
 
 #### ✅ Example Response
 
 ```json
 {
-0	"EUW1_7467501522"
-1	"EUW1_7467436848"
-2	"EUW1_7466527033"
-3	"EUW1_7466481381"
-4	"EUW1_7466427257"
-5	"EUW1_7460824772"
-6	"EUW1_7460804691"
-7	"EUW1_7460778870"
-8	"EUW1_7452199300"
-9	"EUW1_7452194993"
-10	"EUW1_7447879787"
-11	"EUW1_7447841679"
-12	"EUW1_7447801449"
-13	"EUW1_7447716596"
-14	"EUW1_7447710814"
-15	"EUW1_7447678802"
-16	"EUW1_7447451254"
-17	"EUW1_7447428267"
-18	"EUW1_7447392083"
-19	"EUW1_7447359967"
+  "cached": true,
+  "matches": [
+    {
+      "match_id": "EUW1_7467501522",
+      "game_mode": "CLASSIC",
+      "queue_id": 700,
+      "platform_id": "EUW1",
+      "game_duration": 2709,
+      "game_creation": "1753028499472",
+      "game_end": "1753031284066",
+      "map_id": 11,
+      "win_team": 200,
+      "last_fetched": "2025-07-29T22:44:28.772Z",
+      "champion_name": "Leona",
+      "runes_primary": {
+        "style": 8400,
+        "selections": [
+          { "perk": 8439, "var1": 1382, "var2": 1352, "var3": 0 },
+          { "perk": 8463, "var1": 1270, "var2": 0, "var3": 0 },
+          { "perk": 8444, "var1": 1289, "var2": 0, "var3": 0 },
+          { "perk": 8451, "var1": 226, "var2": 0, "var3": 0 }
+        ],
+        "description": "primaryStyle"
+      },
+      "runes_secondary": {
+        "style": 8000,
+        "selections": [
+          { "perk": 9105, "var1": 36, "var2": 10, "var3": 0 },
+          { "perk": 9111, "var1": 763, "var2": 220, "var3": 0 }
+        ],
+        "description": "subStyle"
+      },
+      "summoner_spells": ["4", "14"],
+      "items": [3877, 3190, 1057, 3109, 3075, 3047, 3364],
+      "kills": 1,
+      "deaths": 11,
+      "assists": 10,
+      "kda": 1,
+      "cs": 44,
+      "gold_earned": 11316,
+      "vision_score": 103,
+      "damage_dealt": 13205,
+      "win": false,
+      "role": "SUPPORT",
+      "lane": "BOTTOM",
+      "other_players": [
+        { "name": "berlin", "tagline": "9752", "champion_name": "Yunara" },
+        { "name": "needmorebullets", "tagline": "8102", "champion_name": "Jhin" },
+        { "name": "lotto606", "tagline": "euw", "champion_name": "Sylas" },
+        { "name": "mokax02", "tagline": "euw", "champion_name": "Volibear" },
+        { "name": "na adan atum", "tagline": "dgl", "champion_name": "Milio" },
+        { "name": "azazel enjoyer", "tagline": "ecw", "champion_name": "Veigar" },
+        { "name": "greg inside", "tagline": "hebs", "champion_name": "Lucian" },
+        { "name": "paul muaddib", "tagline": "plp", "champion_name": "Amumu" },
+        { "name": "nonoskaate", "tagline": "drkn", "champion_name": "DrMundo" }
+      ]
+    }
+  ]
 }
+
 ```
-
----
-### 📌 `GET /match/match-details/:region/:matchID`
-
-Fetches all the match details.
-
-#### 🔧 Parameters
-
-| Param    | Description                        | Example    |
-|----------|------------------------------------|------------|
-| `region` | Platform routing region            | `euw1`, `na1`, `kr` |
-| `matchID`| match id can be obtained from the prev end point       | `EUW1_7467501522`    |
-
-
-#### ✅ Example Request
-
-```http
-GET https://lol-project-rah3.onrender.com/match/match-details/euw1/EUW1_7467501522
-````
-
-#### ✅ Example Response
-
-```json
-metadata	
-dataVersion	"2"
-matchId	"EUW1_7470780676"
-participants	
-0	"uNQ9g2kaHgbj8rhlXw_UkLKdHDCdblFlfDsbr6NX4QweRJkDhcU6qQBwUUSMOHeUiZp7c48O4yuF0w"
-1	"YPzo9aNcxdtPTi9XZ7-j6EWTo3KpeOvJfGU1iDHy4Ko1KmdQPeZSJreG2Qgo1fIg03UX_sJ1Uq4B9A"
-2	"jBhIjgdS9uoYaI8ZGKm1yAdp5p4AfibyOGIF2iVCz1TgdIWWpnJCH0nPREOKhVYObzaZrA3Y7GRY1g"
-3	"bRaJ5nuafpqocgZkGEPQEufncX2PZ3hhtMILUyIzuJDT3lN-mgfFHFuamimBlabi-xNeepN-DLZByQ"
-4	"1vNaU2PEbdry4E9KKiORXxAn8ELNkmdHTWt_56RNOheORIF46Rs0wA48Q5X27i2iem3tBY3i9MyglQ"
-5	"8q5Ls60F4SjwTkzmrjzMzoTv3JgsFAbUrtaznQLXObFUoy0AGMSTBdzl9_f4mA9bN6Lirsbaao0nyA"
-6	"w6yCXPBkBOZwY83rCFBUuoi3pXnOpPwp0y-NH3RDAtWIo72H7_BoLHKA3wHuzje2zEhjy9GUCHy3UQ"
-7	"LdmyhzhufH2VPNwd2ovlkdvHxQ0a7nC_bj9fkKhC0lh3tWKCSXj9rMU5EY2EPUjMyM2ZKUanSp5txg"
-8	"AW_uVo_G8fMi8u5UCUTlOjjqoMb8Z984CH6eLvY7Fy6NP_7-t0afnEVM6uCQxuPPtRgZrsmHjHGevg"
-9	"zBzfkI6vt0RX9mp5g5nyrLyB5KkCJT_kriUfpg_BGM8Vd-Gs3UgXRYN7yOKQnkDQ0Wy_2Yv4lhYbuw"
-info	
-endOfGameResult	"GameComplete"
-gameCreation	1753300698251
-gameDuration	2554
-gameEndTimestamp	1753303324138
-gameId	7470780676
-gameMode	"CLASSIC"
-gameName	"teambuilder-match-7470780676"
-gameStartTimestamp	1753300769814
-gameType	"MATCHED_GAME"
-gameVersion	"15.14.697.2104"
-mapId	11
-participants	(10)[ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…} ]
-platformId	"EUW1"
-queueId	420
-teams	[ {…}, {…} ]
-tournamentCode	""
-```
----
 
 ## 🛠️ Upcoming Endpoints (In Progress)
 
