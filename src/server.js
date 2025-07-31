@@ -9,6 +9,17 @@ import { logger } from "./logger.js";
 dotenv.config();
 const app = express();
 
+app.use((req, res, next) => {
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  logger.info("Incoming request", {
+    method: req.method,
+    url: req.originalUrl,
+    ip,
+    userAgent: req.headers["user-agent"]
+  });
+  next();
+});
+
 // Root route to serve README as HTML
 app.get('/', (req, res) => {
   const readmePath = path.join(process.cwd(), 'README.md');
