@@ -5,6 +5,8 @@ import path from 'path';
 import { marked } from 'marked';
 import playerRoutes from "./routes/playerRoutes.js";
 import { logger } from "./logger.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger.js"; // adjust path if needed
 
 dotenv.config();
 const app = express();
@@ -52,6 +54,8 @@ app.get('/', (req, res) => {
 });
 
 app.use("/player", playerRoutes);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
